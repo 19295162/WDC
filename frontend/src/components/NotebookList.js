@@ -11,6 +11,7 @@ const notebooksActionCreators = require('../reducers/notebooks');
   you will need to build upon it in order to complete the assignment.
 */
 class NotebookList extends React.Component {
+
   render() {
     const createNotebookListItem = (notebook) => {
       return (
@@ -32,7 +33,7 @@ class NotebookList extends React.Component {
 }
 
 const NotebookListContainer = ReactRedux.connect(
-  state => ({
+  (state) => ({
     notebooks: state.notebooks
   }),
   createActionDispatchers(notebooksActionCreators)

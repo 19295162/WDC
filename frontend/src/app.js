@@ -12,6 +12,13 @@
 const path = require('path');
 const express = require('express');
 const Youch = require('youch');
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+//const _ = require('lodash');
+const api = require('./helpers/api');
+const createStore = require('./helpers/createStore');
+const Root = React.createFactory(require('./components/Root'));
+const combinedReducers = require('./reducers');
 
 // Create a new Express app
 const app = express();
@@ -24,7 +31,20 @@ app.use('/assets/font-awesome/fonts', express.static(
   path.dirname(require.resolve('font-awesome/fonts/FontAwesome.otf'))));
 
 // Set up the index route
-app.get('/', (req, res) => {
+app.get('/', (req, res, next) => {
+
+  api.get('/notebooks').then((notebooks) => {
+
+    const initialState = combinedReducers();
+    initialState.notebooks.data = notebooks;
+  
+    const initialStateString = JSON.stringify(initialState).replace(/<\//g, "<\\/");
+
+    const store = createStore(initialState);
+    const rootComponent = Root( store );
+
+    const reactHtml = ReactDOMServer.renderToString(rootComponent);
+
   const htmlDocument = `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -38,13 +58,15 @@ app.get('/', (req, res) => {
         <script src="/assets/js/app.js"></script>
       </head>
       <body>
-        <div id="root"></div>
-        <script>main();</script>
+        <div class="container" id="root">${reactHtml}</div>
+        <script src="/assets/js/app.js"></script>
+        <script>window.main(${initialStateString});</script>
       </body>
     </html>`;
 
   // Respond with the complete HTML page
   res.send(htmlDocument);
+  }).catch(next)
 });
 
 // Catch-all for handling errors.
