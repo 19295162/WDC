@@ -7,6 +7,7 @@
 const React = require('react');
 
 const NotebookList = require('./NotebookList');
+const NoteList = require('./NoteList')
 
 /*
   *** TODO: Start building the frontend from here ***
@@ -16,10 +17,11 @@ const NotebookList = require('./NotebookList');
 const Home = () => (
   <div className="container">
     <h1>Neverwrote</h1>
-    <p>
-      This placeholder text was rendered by the <code>Home</code> component.
-    </p>
+    <h4>
+      Never forget anything ever again!
+    </h4>
     <NotebookList />
+    <NoteList />
   </div>
 );
 

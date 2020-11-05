@@ -34,14 +34,16 @@ app.use('/assets/font-awesome/fonts', express.static(
 app.get('/', (req, res, next) => {
 
   api.get('/notebooks').then((notebooks) => {
+    api.get('/notes').then((notes) => {
 
     const initialState = combinedReducers();
     initialState.notebooks.data = notebooks;
+    initialState.notes.data = notes;
   
     const initialStateString = JSON.stringify(initialState).replace(/<\//g, "<\\/");
 
     const store = createStore(initialState);
-    const rootComponent = Root( store );
+    const rootComponent = Root({ store });
 
     const reactHtml = ReactDOMServer.renderToString(rootComponent);
 
@@ -66,6 +68,7 @@ app.get('/', (req, res, next) => {
 
   // Respond with the complete HTML page
   res.send(htmlDocument);
+    })
   }).catch(next)
 });
 
